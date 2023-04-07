@@ -63,7 +63,7 @@ def parse_args():
 
     parser.add_argument('--sync-bn', action='store_true', help='use SyncBatchNorm, only available in DDP mode')
     parser.add_argument('--local_rank', type=int, default=-1, help='DDP parameter, do not modify')
-    parser.add_argument('--conf-thres', type=float, default=0.001, help='object confidence threshold')
+    parser.add_argument('--conf-thres', type=float, default=0.1, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.6, help='IOU threshold for NMS')
     args = parser.parse_args()
 
@@ -74,12 +74,12 @@ def main():
     # set all the configurations
     args = parse_args()
     update_config(cfg, args)
-
-    # Set DDP variables
     world_size = int(os.environ['WORLD_SIZE']) if 'WORLD_SIZE' in os.environ else 1
-    global_rank = int(os.environ['RANK']) if 'RANK' in os.environ else -1
-
+    global_rank = int(os.environ['SLURM_PROCID']) if 'SLURM_PROCID' in os.environ else -1
+    local_rank = int(os.environ['SLURM_LOCALID'])
     rank = global_rank
+    print("global_rank: "+str(rank)+"local_rank: "+str(local_rank)+"world_size: "+str(world_size))
+    print("device count: "+str(torch.cuda.device_count() ))
     #print(rank)
     # TODO: handle distributed training logger
     # set the logger, tb_log_dir means tensorboard logdir
@@ -111,11 +111,12 @@ def main():
     device = select_device(logger, batch_size=cfg.TRAIN.BATCH_SIZE_PER_GPU* len(cfg.GPUS)) if not cfg.DEBUG \
         else select_device(logger, 'cpu')
 
-    if args.local_rank != -1:
-        assert torch.cuda.device_count() > args.local_rank
-        torch.cuda.set_device(args.local_rank)
-        device = torch.device('cuda', args.local_rank)
-        dist.init_process_group(backend='nccl', init_method='env://')  # distributed backend
+    if local_rank != -1:
+        assert torch.cuda.device_count() > local_rank
+        torch.cuda.set_device(local_rank)
+        device = torch.device('cuda', local_rank)
+        # dist.init_process_group(backend='nccl', init_method='env://')  # distributed backend
+        dist.init_process_group(backend='nccl', world_size=world_size, rank=rank) # distributed backend
     
     print("load model to device")
     model = get_net(cfg).to(device)
@@ -244,12 +245,12 @@ def main():
         # model = torch.nn.DataParallel(model, device_ids=cfg.GPUS).cuda()
     # # DDP mode
     if rank != -1:
-        model = DDP(model, device_ids=[args.local_rank], output_device=args.local_rank,find_unused_parameters=True)
+        model = DDP(model, device_ids=[local_rank], output_device=local_rank,find_unused_parameters=True)
 
 
     # assign model params
     model.gr = 1.0
-    model.nc = 1
+    model.nc = 14
     # print('bulid model finished')
 
     print("begin to load data")

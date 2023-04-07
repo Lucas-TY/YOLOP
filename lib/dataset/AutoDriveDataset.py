@@ -261,4 +261,3 @@ class AutoDriveDataset(Dataset):
             label_seg.append(l_seg)
             label_lane.append(l_lane)
         return torch.stack(img, 0), [torch.cat(label_det, 0), torch.stack(label_seg, 0), torch.stack(label_lane, 0)], paths, shapes
-

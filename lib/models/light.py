@@ -317,7 +317,7 @@ class MCnet(nn.Module):
     def __init__(self, block_cfg, **kwargs):
         super(MCnet, self).__init__()
         layers, save= [], []
-        self.nc = 13
+        self.nc = 14
         self.detector_index = -1
         self.Da_out_idx = 45 if len(block_cfg)==49 else 34
         # self.Da_out_idx = 37
@@ -396,7 +396,7 @@ class CSPDarknet(nn.Module):
         super(CSPDarknet, self).__init__()
         layers, save= [], []
         # self.nc = 13    #output category num
-        self.nc = 1
+        self.nc = 14
         self.detector_index = -1
 
         # Build model

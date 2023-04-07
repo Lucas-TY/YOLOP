@@ -70,7 +70,7 @@ class MCnet(nn.Module):
     def __init__(self, block_cfg):
         super(MCnet, self).__init__()
         layers, save = [], []
-        self.nc = 1  # traffic or not
+        self.nc = 14  # traffic or not
         self.detector_index = -1
         self.det_out_idx = block_cfg[0][0]
         self.seg_out_idx = block_cfg[0][1:]

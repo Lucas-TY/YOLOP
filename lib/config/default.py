@@ -10,7 +10,7 @@ _C.WORKERS = 8
 _C.PIN_MEMORY = False
 _C.PRINT_FREQ = 20
 _C.AUTO_RESUME =False       # Resume from the last training interrupt
-_C.NEED_AUTOANCHOR = False      # Re-select the prior anchor(k-means)    When training from scratch (epoch=0), set it to be ture!
+_C.NEED_AUTOANCHOR = True      # Re-select the prior anchor(k-means)    When training from scratch (epoch=0), set it to be ture!
 _C.DEBUG = False
 _C.num_seg_class = 2
 
@@ -50,10 +50,10 @@ _C.LOSS.LL_IOU_GAIN = 0.2 # lane line iou loss gain
 
 # DATASET related params
 _C.DATASET = CN(new_allowed=True)
-_C.DATASET.DATAROOT = '/home/zwt/bdd/bdd100k/images/100k'       # the path of images folder
-_C.DATASET.LABELROOT = '/home/zwt/bdd/bdd100k/labels/100k'      # the path of det_annotations folder
-_C.DATASET.MASKROOT = '/home/zwt/bdd/bdd_seg_gt'                # the path of da_seg_annotations folder
-_C.DATASET.LANEROOT = '/home/zwt/bdd/bdd_lane_gt'               # the path of ll_seg_annotations folder
+_C.DATASET.DATAROOT = '/fs/ess/scratch/PAS2119/OSCCompetition/wu.4355/bdd/bdd100k/images/100k'       # the path of images folder
+_C.DATASET.LABELROOT = '/fs/ess/scratch/PAS2119/OSCCompetition/wu.4355/bdd/bdd100k/labels/100k'     # the path of det_annotations folder
+_C.DATASET.MASKROOT = '/fs/ess/scratch/PAS2119/OSCCompetition/wu.4355/bdd/bdd_seg_gt'                # the path of da_seg_annotations folder
+_C.DATASET.LANEROOT = '/fs/ess/scratch/PAS2119/OSCCompetition/wu.4355/bdd/bdd_lane_gt'               # the path of ll_seg_annotations folder
 _C.DATASET.DATASET = 'BddDataset'
 _C.DATASET.TRAIN_SET = 'train'
 _C.DATASET.TEST_SET = 'val'
@@ -93,7 +93,7 @@ _C.TRAIN.BEGIN_EPOCH = 0
 _C.TRAIN.END_EPOCH = 240
 
 _C.TRAIN.VAL_FREQ = 1
-_C.TRAIN.BATCH_SIZE_PER_GPU =24
+_C.TRAIN.BATCH_SIZE_PER_GPU =8
 _C.TRAIN.SHUFFLE = True
 
 _C.TRAIN.IOU_THRESHOLD = 0.2
@@ -114,11 +114,11 @@ _C.TRAIN.DET_ONLY = False          # Only train detection task
 
 
 
-_C.TRAIN.PLOT = True                # 
+_C.TRAIN.PLOT = False                # 
 
 # testing
 _C.TEST = CN(new_allowed=True)
-_C.TEST.BATCH_SIZE_PER_GPU = 24
+_C.TEST.BATCH_SIZE_PER_GPU = 8
 _C.TEST.MODEL_FILE = ''
 _C.TEST.SAVE_JSON = False
 _C.TEST.SAVE_TXT = False
